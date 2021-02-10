@@ -37,6 +37,9 @@ type Props = {
    */
   actionOnError?: "select" | "clear" | "none";
 
+  onSuccess: (code: string) => {};
+  onFailure: (code: string) => {};
+
   /**
    * Maximum length of buffer.
    * This props is not set to input element.
@@ -59,6 +62,8 @@ const BarcodeInput: React.FC<Props> = ({
   allowBlurOnEmpty = true,
   validator = (code) => true,
   actionOnError = "select",
+  onSuccess = (code) => {},
+  onFailure = (code) => {},
   maxLength = 256,
   prefix = "",
   surfix = "",
@@ -77,13 +82,14 @@ const BarcodeInput: React.FC<Props> = ({
 
       if (validator(value)) {
         // Success
-        setCode(`${prefix}${value}${surfix}`);
+        // setCode(`${prefix}${value}${surfix}`);
+        onSuccess(`${prefix}${value}${surfix}`)
 
       } else {
         // Error
         switch (actionOnError) {
           case "select":
-            setCode(value);
+            // setCode(value);
             setTimeout(() => {
               (e.target as HTMLInputElement).select();
             }, 0);
@@ -96,6 +102,7 @@ const BarcodeInput: React.FC<Props> = ({
           default:
             break;
         }
+        onFailure(value);
       }
 
       // Buffer clear
